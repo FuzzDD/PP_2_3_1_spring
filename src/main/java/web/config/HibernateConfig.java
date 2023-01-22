@@ -40,25 +40,25 @@ public class HibernateConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(getDataSource());
-        em.setPackagesToScan("web");
-        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+    LocalContainerEntityManagerFactoryBean getEntityManager() {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
+                new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactoryBean.setDataSource(getDataSource());
+        entityManagerFactoryBean.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         Properties props = new Properties();
         props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-        props.put("hibernate.dialect", env.getProperty("db.dialect"));
-        em.setJpaProperties(props);
-        return em;
+        entityManagerFactoryBean.setJpaProperties(props);
+        return entityManagerFactoryBean;
     }
 
 
     @Bean
     public PlatformTransactionManager getPlatformTransactionManager() {
         JpaTransactionManager manager = new JpaTransactionManager();
-        manager.setEntityManagerFactory(getEntityManagerFactoryBean().getObject());
+        manager.setEntityManagerFactory(getEntityManager().getObject());
         return manager;
     }
 }
