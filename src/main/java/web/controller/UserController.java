@@ -12,43 +12,35 @@ import web.service.UserService;
 public class UserController {
     @Autowired
     private UserService userDao;
-    private static int count;
 
-//    @GetMapping("/{id}")
-//    public String show(@PathVariable("id") int id, Model model) {
-//        model.addAttribute("user", userDao.show(id));
-//        return "pages/show";
-//    }
-@GetMapping
+    @GetMapping
     public String index(Model model) {
         model.addAttribute("users", userDao.getUsersList());
-        return "/index";
+        return "index";
     }
-@GetMapping("/new")
+    @GetMapping("addUser")
     public String addUser(Model model) {
     model.addAttribute("user", new User());
-    return "/new";
+    return "new";
     }
-    @PostMapping("/new")
+   @PostMapping("create")
     public  String create(@ModelAttribute("user") User user) {
-        user.setId(++count);
     userDao.add(user);
-    return "redirect:/show";
+    return "redirect:/";
     }
-
-    @GetMapping("/{id}/edit")
+    @GetMapping("edit/{id}")
     public String edit(Model model, @PathVariable("id") int id) {
     model.addAttribute("user", userDao.show(id));
-    return "/show";
+    return "edit";
     }
-    @GetMapping("/{id}/edit")
+    @PatchMapping("edit/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
         userDao.update(id, user);
-        return "redirect:/show";
+        return "redirect:/";
     }
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
+    @PostMapping("del")
+    public String delete(@RequestParam("id") int id) {
        userDao.delete(id);
-        return "redirect:/show";
+        return "redirect:/";
     }
 }
